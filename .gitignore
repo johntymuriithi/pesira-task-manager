@@ -1,0 +1,13 @@
+# Backend
+/backend/task-management/target/
+/backend/task-management/.idea/
+/backend/task-management/.mvn/
+
+# Frontend
+/frontend/node_modules/
+/frontend/.env
+/frontend/build/
+
+# OS & IDE
+.DS_Store
+*.log
