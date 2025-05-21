@@ -1,19 +1,12 @@
-import { Provider } from 'react-redux';
-// import { store } from './store';
-// import AppRouter from './router/AppRouter';
+import { useContext } from 'react';
+import UserContext from './context/UserContext';
+import HomePage from './pages/HomePage';
 import Dashboard from './pages/Dashboard';
-import LoadingScreen from './pages/LoadingScreen';
-import NotFound from './pages/NotFound';
-import AddTaskModal from './pages/AddTaskModal';
-import TaskCard from './pages/TaskCard';
 
-export default function App() {
-  return (
-    <div>
-      <Dashboard />
-      {/* <LoadingScreen /> */}
-      {/* <NotFound /> */}
-     
-    </div>
-  );
+function App() {
+  const { user } = useContext(UserContext);
+
+  return <div>{user ? <Dashboard /> : <HomePage />}</div>;
 }
+
+export default App;

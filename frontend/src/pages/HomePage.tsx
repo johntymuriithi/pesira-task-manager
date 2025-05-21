@@ -1,14 +1,31 @@
-import { useState } from 'react';
+import { useState, FormEvent, useContext } from 'react';
 import { ArrowRight, CheckCircle2, Clock, Sparkles, Mountain, Sun } from 'lucide-react';
+import UserContext from '@/context/UserContext';
+import { LoginFormElements, SignUpFormElements} from '@/types/usersTypes';
+
 
 export default function HomePage() {
   const [activePage, setActivePage] = useState('login');
-  
-  // Mock login/signup function - would connect to your backend
-  const handleAuth = () => {
-    console.log('Authentication attempted');
-    // In a real implementation, this would use React Router's navigate
-    // navigate('/dashboard');
+  const [userType, setUserType] = useState('user'); // Default user type
+  const { login, signup } = useContext(UserContext)
+
+  const handleLogin = async (e: FormEvent<LoginFormElements>) => {
+    e.preventDefault();
+    const username = e.currentTarget.elements.emailLogin.value;
+    const password = e.currentTarget.elements.passWord.value;
+
+    login({username, password})
+  };
+
+  const handleSignup = async (e: FormEvent<SignUpFormElements>) => {
+    e.preventDefault();
+
+    const email = e.currentTarget.elements.emailSignup.value;
+    const password = e.currentTarget.elements.confirmPassword.value;
+    const status = userType;
+    const username = e.currentTarget.elements.username.value;
+
+    console.log(signup({ email, password, status, username}))
   };
 
   return (
@@ -100,37 +117,38 @@ export default function HomePage() {
               {activePage === 'login' ? (
                 <div>
                   <h2 className="text-2xl font-bold mb-6">Welcome Back</h2>
-                  <div className="space-y-4">
+                  <form onSubmit={handleLogin} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium mb-1">Email</label>
+                      <label htmlFor="emailLogin" className="block text-sm font-medium mb-1">Username</label>
                       <input 
-                        type="email" 
+                        type="text"
+                        id="emailLogin"
+                        name="emailLogin" 
                         className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
-                        placeholder="your@email.com"
+                        placeholder="john doe"
+                        required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">Password</label>
+                      <label htmlFor="passWord" className="block text-sm font-medium mb-1">Password</label>
                       <input 
-                        type="password" 
+                        type="password"
+                        id="passWord"
+                        name="passWord" 
                         className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
                         placeholder="••••••••"
+                        required
                       />
                     </div>
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center">
-                        <input type="checkbox" id="remember" className="mr-2" />
-                        <label htmlFor="remember" className="text-sm text-gray-300">Remember me</label>
-                      </div>
-                      <button className="text-sm text-purple-400 hover:underline">Forgot password?</button>
-                    </div>
+                    
                     <button 
-                      onClick={handleAuth}
+                      type="submit"
                       className="w-full py-3 px-4 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex justify-center items-center gap-2 hover:from-purple-600 hover:to-blue-600 transition-all font-medium"
+                      
                     >
                       Login <ArrowRight size={16} />
                     </button>
-                  </div>
+                  </form>
                   <div className="mt-6 text-center text-sm text-gray-400">
                     Don't have an account?{" "}
                     <button 
@@ -144,60 +162,77 @@ export default function HomePage() {
               ) : (
                 <div>
                   <h2 className="text-2xl font-bold mb-6">Create Account</h2>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-1">First Name</label>
-                        <input 
-                          type="text" 
-                          className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
-                          placeholder="John"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Last Name</label>
-                        <input 
-                          type="text" 
-                          className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
-                          placeholder="Doe"
-                        />
-                      </div>
+                  <form onSubmit={handleSignup} className="space-y-4">
+                    <div>
+                      <label htmlFor="username" className="block text-sm font-medium mb-1">Username</label>
+                      <input 
+                        type="text"
+                        id="username"
+                        name="username" 
+                        className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
+                        placeholder="JohnDoe"
+                        required
+                      />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">Email</label>
+                      <label htmlFor="emailSignup" className="block text-sm font-medium mb-1">Email</label>
                       <input 
-                        type="email" 
+                        type="email"
+                        id="emailSignup"
+                        name="emailSignup" 
                         className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
                         placeholder="your@email.com"
+                        required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">Password</label>
+                      <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1">Password</label>
                       <input 
-                        type="password" 
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword" 
                         className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
                         placeholder="••••••••"
+                        required
                       />
                     </div>
+                    
                     <div>
-                      <label className="block text-sm font-medium mb-1">Confirm Password</label>
-                      <input 
-                        type="password" 
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
-                        placeholder="••••••••"
-                      />
+                      <label className="block text-sm font-medium mb-2">Account Type</label>
+                      <div className="flex gap-4">
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="formRadio"
+                            value="user"
+                            checked={userType === 'user'}
+                            onChange={() => setUserType('user')}
+                            className="mr-2"
+                          />
+                          User
+                        </label>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="formRadio"
+                            value="admin"
+                            checked={userType === 'admin'}
+                            onChange={() => setUserType('admin')}
+                            className="mr-2"
+                          />
+                          Admin
+                        </label>
+                      </div>
                     </div>
-                    <div className="flex items-center">
-                      <input type="checkbox" id="terms" className="mr-2" />
-                      <label htmlFor="terms" className="text-sm text-gray-300">I agree to the Terms of Service and Privacy Policy</label>
-                    </div>
+                   
                     <button 
-                      onClick={handleAuth}
+                      type="submit"
                       className="w-full py-3 px-4 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex justify-center items-center gap-2 hover:from-purple-600 hover:to-blue-600 transition-all font-medium"
+                      
                     >
-                      Create Account <ArrowRight size={16} />
+                      Create Account' <ArrowRight size={16} />
                     </button>
-                  </div>
+                  </form>
                   <div className="mt-6 text-center text-sm text-gray-400">
                     Already have an account?{" "}
                     <button 
@@ -216,3 +251,4 @@ export default function HomePage() {
     </div>
   );
 }
+

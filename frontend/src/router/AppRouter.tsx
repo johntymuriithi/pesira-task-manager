@@ -1,61 +1,43 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import HomePage from './HomePage';
-import Dashboard from './Dashboard';
-import NotFound from './NotFound';
-import LoadingScreen from './LoadingScreen';
+// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// import { useState, useEffect } from 'react';
+// import HomePage from '@/pages/HomePage';
+// import Dashboard from '@/pages/Dashboard';
 
-export default function AppRouter() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+// export default function AppRouter() {
+//   const [isAuthenticated, setIsAuthenticated] = useState(false);
+//   const [isLoading, setIsLoading] = useState(true);
   
-  // Simulating auth check on component mount
-  useEffect(() => {
-    // In a real app, this would check for a token in localStorage or cookies
-    // and potentially validate it with the backend
-    const checkAuth = () => {
-      const token = localStorage.getItem('authToken');
-      setIsAuthenticated(!!token);
-      setIsLoading(false);
-    };
-    
-    // Small delay to mimic network request
-    setTimeout(checkAuth, 500);
-  }, []);
+//   useEffect(() => {
+//     const token = localStorage.getItem('authToken');
+//     setIsAuthenticated(!!token);
+//     setIsLoading(false);
+//   }, []);
   
-  // Auth functions to be passed as props
-  const login = (token) => {
-    localStorage.setItem('authToken', token);
-    setIsAuthenticated(true);
-  };
+//   const login = (token) => {
+//     localStorage.setItem('authToken', token);
+//     setIsAuthenticated(true);
+//   };
   
-  const logout = () => {
-    localStorage.removeItem('authToken');
-    setIsAuthenticated(false);
-  };
-  
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-  
-  return (
-    <Router>
-      <Routes>
-        {/* Public routes */}
-        <Route 
-          path="/" 
-          element={isAuthenticated ? <Navigate to="/dashboard" /> : <HomePage onLogin={login} />} 
-        />
-        
-        {/* Protected routes */}
-        <Route 
-          path="/dashboard/*" 
-          element={isAuthenticated ? <Dashboard onLogout={logout} /> : <Navigate to="/" />} 
-        />
-        
-        {/* 404 route */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
-  );
-}
+//   const logout = () => {
+//     localStorage.removeItem('authToken');
+//     setIsAuthenticated(false);
+//   };
+
+//   // Optional loading screen
+//   // if (isLoading) return <LoadingScreen />;
+
+//   return (
+//     <Router>
+//       <Routes>
+//         {/* Always render HomePage on root */}
+//         <Route path="/" element={<Dashboard />} />
+
+//         {/* Dashboard is still protected */}
+//         <Route 
+//           path="/dashboard/*" 
+//           element={isAuthenticated ? <Dashboard onLogout={logout} /> : <HomePage onLogin={login} />} 
+//         />
+//       </Routes>
+//     </Router>
+//   );
+// }

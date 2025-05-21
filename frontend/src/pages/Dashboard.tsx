@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { 
   CheckCircle2, 
   ChevronRight, 
@@ -7,54 +7,53 @@ import {
   Menu, 
   Plus, 
   Search, 
-  Settings, 
   Sparkles, 
   Star, 
-  User
+  User 
 } from 'lucide-react';
 import TaskList from './TaskList';
 import AddTaskModal from './AddTaskModal';
 import EditTaskModal from './EditTaskModal';
+import { Task } from '@/types/Task';
+import { TaskContext } from '@/context/TaskContext';
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
-  const [editingTask, setEditingTask] = useState(null);
-  const [tasks, setTasks] = useState([]);
-  
-  // Load tasks from localStorage on component mount
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  const taskContext = useContext(TaskContext);
+  const fetchTasks = taskContext?.fetchTasks;
+
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks');
     if (storedTasks) {
       setTasks(JSON.parse(storedTasks));
     } else {
-      // Sample tasks data for first-time users
-      const initialTasks = [
+      const initialTasks: Task[] = [
         {
           id: '1',
           title: 'Complete project proposal',
           description: 'Write and submit the project proposal for client review',
-          dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-          status: 'todo',
-          priority: 'high'
+          date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+          status: 'Pending',
         },
         {
           id: '2',
           title: 'Weekly team meeting',
           description: 'Discuss project progress and assign new tasks',
-          dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
-          status: 'inProgress',
-          priority: 'medium'
+          date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
+          status: 'Pending',
         },
         {
           id: '3',
           title: 'Research new technologies',
           description: 'Explore potential technologies for upcoming project',
-          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-          status: 'todo',
-          priority: 'low'
+          date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          status: 'Pending',
         }
       ];
       setTasks(initialTasks);
@@ -62,19 +61,16 @@ export default function Dashboard() {
     }
   }, []);
 
-  // Save tasks to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
-  
-  // Sample user data
+
   const user = {
     name: 'Alex Johnson',
     email: 'alex@example.com',
     avatar: '/api/placeholder/40/40'
   };
 
-  // Filter options
   const filters = [
     { id: 'all', label: 'All Tasks', icon: List },
     { id: 'pending', label: 'Pending', icon: Clock },
@@ -82,47 +78,41 @@ export default function Dashboard() {
     { id: 'completed', label: 'Completed', icon: CheckCircle2 }
   ];
 
-  // Add a new task
-  const handleAddTask = (newTask) => {
-    const taskWithId = {
-      ...newTask,
-      id: Date.now().toString()
-    };
-    setTasks([...tasks, taskWithId]);
+  const handleAddTask = (newTask: Task) => {
+    const taskWithId = { ...newTask, id: Date.now().toString() };
+    setTasks(prev => [...prev, taskWithId]);
   };
 
-  // Delete a task
-  const handleDeleteTask = (taskId) => {
-    setTasks(tasks.filter(task => task.id !== taskId));
+  const handleDeleteTask = (taskId: string) => {
+    setTasks(prev => prev.filter(task => task.id !== taskId));
   };
 
-  // Update a task's status
-  const handleStatusChange = (taskId, newStatus) => {
-    setTasks(tasks.map(task => 
-      task.id === taskId ? { ...task, status: newStatus } : task
-    ));
+  const handleStatusChange = (taskId: string, newStatus: string) => {
+    setTasks(prev =>
+      prev.map(task =>
+        task.id === taskId ? { ...task, status: newStatus } : task
+      )
+    );
   };
 
-  // Open edit modal for a task
-  const handleEditTask = (task) => {
-    setEditingTask(task);
-  };
+  const handleEditTask = (task: Task) => setEditingTask(task);
 
-  // Update task with edited data
-  const handleUpdateTask = (updatedTask) => {
-    setTasks(tasks.map(task => 
-      task.id === updatedTask.id ? updatedTask : task
-    ));
+  const handleUpdateTask = (updatedTask: Task) => {
+    setTasks(prev =>
+      prev.map(task =>
+        task.id === updatedTask.id ? updatedTask : task
+      )
+    );
     setEditingTask(null);
   };
 
   return (
     <div className="min-h-screen bg-gray-950 text-white flex">
-      {/* Sidebar - fixed position */}
+      {/* Sidebar */}
       <div className="fixed inset-y-0 left-0 z-10">
         <div className={`${sidebarOpen ? 'w-64' : 'w-16'} h-full bg-gray-900 transition-all duration-300 flex flex-col border-r border-gray-800`}>
           <div className="flex flex-col h-full">
-            <div className="p-4 flex items-center justify-between h-16 border-b border-gray-800 flex-shrink-0">
+            <div className="p-4 flex items-center justify-between h-16 border-b border-gray-800">
               {sidebarOpen ? (
                 <div className="flex items-center gap-2">
                   <Sparkles className="text-purple-400" size={20} />
@@ -168,7 +158,6 @@ export default function Dashboard() {
               </nav>
             </div>
 
-            {/* Fixed User Info at bottom */}
             <div className="p-3 border-t border-gray-800 mt-auto">
               <div className={`flex items-center ${sidebarOpen ? 'justify-between' : 'justify-center'} p-2 rounded-md`}>
                 <div className="flex items-center gap-3">
@@ -190,10 +179,9 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      
-      {/* Main content - with left margin to accommodate sidebar */}
+
+      {/* Main content */}
       <div className={`flex-1 ${sidebarOpen ? 'ml-64' : 'ml-16'} transition-all duration-300`}>
-        {/* Top nav */}
         <header className="h-16 border-b border-gray-800 bg-gray-900/70 backdrop-blur-sm flex items-center px-6 sticky top-0 z-10">
           <div className="flex items-center gap-4 flex-1">
             <div className="relative flex-1 max-w-md">
@@ -207,21 +195,20 @@ export default function Dashboard() {
               />
             </div>
           </div>
-          
+
           <div className="flex items-center gap-4">
             <button className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
               <User size={18} />
             </button>
           </div>
         </header>
-        
-        {/* Main dashboard content */}
+
         <main className="overflow-y-auto bg-gray-950 p-6">
           <div className="mb-6">
             <h1 className="text-2xl font-bold">{filters.find(f => f.id === activeFilter)?.label}</h1>
             <p className="text-gray-400">Manage and organize your tasks efficiently</p>
           </div>
-          
+
           <TaskList 
             tasks={tasks} 
             filter={activeFilter} 
@@ -232,8 +219,7 @@ export default function Dashboard() {
           />
         </main>
       </div>
-      
-      {/* Add Task Modal */}
+
       {isAddTaskModalOpen && (
         <AddTaskModal 
           onClose={() => setIsAddTaskModalOpen(false)}
@@ -241,7 +227,6 @@ export default function Dashboard() {
         />
       )}
 
-      {/* Edit Task Modal */}
       {editingTask && (
         <EditTaskModal 
           task={editingTask}

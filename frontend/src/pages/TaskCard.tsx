@@ -11,9 +11,12 @@ import {
 } from 'lucide-react';
 import EditTaskModal from './EditTaskModal';
 
+
 export default function TaskCard({ task, onStatusChange, onDelete }) {
   const [showOptions, setShowOptions] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  
+
   
   // Calculate days remaining
   const calculateDaysRemaining = () => {
@@ -60,35 +63,43 @@ export default function TaskCard({ task, onStatusChange, onDelete }) {
         return null;
     }
   };
-  
-  // Priority badge styles
-  const getPriorityBadge = () => {
-    switch(task.priority) {
-      case 'low':
-        return (
-          <div className="text-gray-400 text-xs flex items-center gap-1">
-            <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
-            <span>Low</span>
-          </div>
-        );
-      case 'medium':
-        return (
-          <div className="text-blue-400 text-xs flex items-center gap-1">
-            <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
-            <span>Medium</span>
-          </div>
-        );
-      case 'high':
-        return (
-          <div className="text-red-400 text-xs flex items-center gap-1">
-            <span className="w-2 h-2 bg-red-400 rounded-full"></span>
-            <span>High</span>
-          </div>
-        );
-      default:
-        return null;
-    }
+
+   const handleDelete = async (id) => {
+   
+    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTc0NzgyNzQwMiwiZXhwIjoxNzQ3OTEzODAyfQ.dLgY_oB7mBIWEdNep9Urkqd9FMqtLcYPgJNdwl8kKGDXrwN6u1AMaf-s_Mh4Si9ynNdxp9Dk7u2Pxt94p6Dxcg';
+
+    // try {
+     
+    //   await dispatch(
+    //     deleteTask({id, token })
+    //   ).unwrap();
+    //   console.log("deleted")
+    // } catch (err) {
+    //   console.log(err); // for now only
+      
+    // } finally {
+    //   console.log('FAILED')
+    // }
   };
+  
+  const handleComplete = async (id) => {
+   
+    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTc0NzgyNzQwMiwiZXhwIjoxNzQ3OTEzODAyfQ.dLgY_oB7mBIWEdNep9Urkqd9FMqtLcYPgJNdwl8kKGDXrwN6u1AMaf-s_Mh4Si9ynNdxp9Dk7u2Pxt94p6Dxcg';
+
+    // try {
+     
+    //   await dispatch(
+    //     completeTask({id, token })
+    //   ).unwrap();
+    //   console.log("completed")
+    // } catch (err) {
+    //   console.log(err); // for now only
+      
+    // } finally {
+    //   console.log('FAILED')
+    // }
+  };
+  
   
   return (
     <>
@@ -97,7 +108,6 @@ export default function TaskCard({ task, onStatusChange, onDelete }) {
           <div className="flex-1">
             <div className="flex items-center mb-2 gap-2">
               {getStatusBadge()}
-              {getPriorityBadge()}
             </div>
             <h3 className="font-medium mb-1 text-lg line-clamp-1">{task.title}</h3>
             <p className="text-gray-400 text-sm line-clamp-2 mb-4">{task.description}</p>
@@ -107,7 +117,7 @@ export default function TaskCard({ task, onStatusChange, onDelete }) {
                 <Calendar size={14} />
                 <span>Due: {formatDate(task.dueDate)}</span>
                 
-                {task.status !== 'completed' && daysRemaining >= 0 && (
+                {task.status !== 'Completed' && daysRemaining >= 0 && (
                   <span className={`ml-2 ${
                     daysRemaining <= 1 ? 'text-red-400' : 
                     daysRemaining <= 3 ? 'text-yellow-400' : 
@@ -117,7 +127,7 @@ export default function TaskCard({ task, onStatusChange, onDelete }) {
                   </span>
                 )}
                 
-                {task.status !== 'completed' && daysRemaining < 0 && (
+                {task.status !== 'Completed' && daysRemaining < 0 && (
                   <span className="ml-2 text-red-400 flex items-center gap-1">
                     <AlertCircle size={14} />
                     Overdue
@@ -135,44 +145,22 @@ export default function TaskCard({ task, onStatusChange, onDelete }) {
                 
                 {showOptions && (
                   <div className="absolute z-10 right-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded-md shadow-lg py-1">
-                    {task.status !== 'completed' && (
+                    {task.status !== 'Completed' && (
                       <button 
                         onClick={() => {
-                          onStatusChange(task.id, 'completed');
+                          onStatusChange(task.id, 'Completed');
                           setShowOptions(false);
                         }}
                         className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm hover:bg-gray-700 transition-colors"
                       >
                         <CheckCircle2 size={16} className="text-green-400" />
-                        <span>Mark as Completed</span>
+                        <span onClick={() => handleComplete(1)}>Mark as Completed</span>
                       </button>
                     )}
                     
-                    {task.status === 'completed' && (
-                      <button 
-                        onClick={() => {
-                          onStatusChange(task.id, 'pending');
-                          setShowOptions(false);
-                        }}
-                        className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm hover:bg-gray-700 transition-colors"
-                      >
-                        <Clock size={16} className="text-yellow-400" />
-                        <span>Mark as Pending</span>
-                      </button>
-                    )}
+                   
                     
-                    {task.status !== 'in-progress' && task.status !== 'completed' && (
-                      <button 
-                        onClick={() => {
-                          onStatusChange(task.id, 'in-progress');
-                          setShowOptions(false);
-                        }}
-                        className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm hover:bg-gray-700 transition-colors"
-                      >
-                        <Star size={16} className="text-blue-400" />
-                        <span>Mark as In Progress</span>
-                      </button>
-                    )}
+                    
                     
                     <button 
                       onClick={() => {
@@ -193,7 +181,7 @@ export default function TaskCard({ task, onStatusChange, onDelete }) {
                       className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm hover:bg-gray-700 transition-colors text-red-400"
                     >
                       <Trash2 size={16} />
-                      <span>Delete Task</span>
+                      <span onClick={() => handleDelete(1)}>Delete Task</span>
                     </button>
                   </div>
                 )}

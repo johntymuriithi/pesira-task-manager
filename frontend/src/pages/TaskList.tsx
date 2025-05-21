@@ -15,7 +15,7 @@ export default function TaskList({ filter, searchQuery }) {
       description: 'Finalize the project scope and deliverables for the client pitch',
       dueDate: '2025-06-01',
       status: 'pending',
-      priority: 'high',
+     
       created: '2025-05-15T10:30:00Z'
     },
     {
@@ -24,7 +24,7 @@ export default function TaskList({ filter, searchQuery }) {
       description: 'Gather information on top 5 competitors in the market',
       dueDate: '2025-05-25',
       status: 'in-progress',
-      priority: 'medium',
+     
       created: '2025-05-16T14:20:00Z'
     },
     {
@@ -33,7 +33,7 @@ export default function TaskList({ filter, searchQuery }) {
       description: 'Create user journey maps and wireframes for the new feature',
       dueDate: '2025-05-22',
       status: 'in-progress',
-      priority: 'high',
+      
       created: '2025-05-17T09:15:00Z'
     },
     {
@@ -42,7 +42,7 @@ export default function TaskList({ filter, searchQuery }) {
       description: 'Review and update all technical documentation for the API',
       dueDate: '2025-05-28',
       status: 'pending',
-      priority: 'low',
+      
       created: '2025-05-18T16:45:00Z'
     },
     {
@@ -51,7 +51,7 @@ export default function TaskList({ filter, searchQuery }) {
       description: 'Discuss project progress and address any blockers',
       dueDate: '2025-05-21',
       status: 'completed',
-      priority: 'medium',
+      
       created: '2025-05-19T11:00:00Z'
     },
   ];
@@ -64,7 +64,6 @@ export default function TaskList({ filter, searchQuery }) {
       description: `Generated task ${startIndex + i + 1}`,
       dueDate: '2025-06-15',
       status: ['pending', 'in-progress', 'completed'][Math.floor(Math.random() * 3)],
-      priority: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)],
       created: new Date().toISOString()
     }));
   };

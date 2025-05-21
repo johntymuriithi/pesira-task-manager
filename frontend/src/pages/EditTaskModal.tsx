@@ -128,65 +128,9 @@ export default function EditTaskModal({ task, onClose, onStatusChange }) {
               </div>
               {errors.dueDate && <p className="mt-1 text-sm text-red-500">{errors.dueDate}</p>}
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-1">Status</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <CheckCircle2 size={16} className="text-gray-400" />
-                </div>
-                <select
-                  name="status"
-                  value={editedTask.status}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent appearance-none"
-                >
-                  <option value="todo">To Do</option>
-                  <option value="inProgress">In Progress</option>
-                  <option value="review">Review</option>
-                  <option value="done">Done</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </div>
-            </div>
           </div>
           
-          <div>
-            <label className="block text-sm font-medium mb-1">Priority</label>
-            <div className="flex space-x-4">
-              {['low', 'medium', 'high'].map((priority) => (
-                <label key={priority} className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="priority"
-                    value={priority}
-                    checked={editedTask.priority === priority}
-                    onChange={handleChange}
-                    className="sr-only"
-                  />
-                  <div className={`flex items-center justify-center h-10 w-10 rounded-full border ${
-                    editedTask.priority === priority 
-                      ? 'border-transparent ring-2 ring-purple-500 bg-purple-500/20' 
-                      : 'border-gray-700 bg-gray-800'
-                  }`}>
-                    <Star 
-                      size={18} 
-                      className={`${
-                        editedTask.priority === priority ? 'text-purple-400' : 'text-gray-400'
-                      } ${
-                        priority === 'high' ? 'fill-current' : ''
-                      }`} 
-                    />
-                  </div>
-                  <span className="capitalize">{priority}</span>
-                </label>
-              ))}
-            </div>
-          </div>
+          
           
           <div className="pt-4 border-t border-gray-800 flex justify-end space-x-4">
             <button
