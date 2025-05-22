@@ -17,8 +17,8 @@ A full-stack Task Management Application that allows users to create, view, upda
 - Clean user interface with form validations
 
 ### Unique Features Added
-- User authentication with JWT/session (WIP)
-- Search tasks by title/description (WIP)
+- User authentication with JWT/session
+- Search tasks by title/description
 
 ---
 
