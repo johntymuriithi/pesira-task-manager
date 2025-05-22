@@ -26,7 +26,7 @@ A full-stack Task Management Application that allows users to create, view, upda
 
 | Frontend | Backend | Database |
 |----------|---------|----------|
-| React.js (with Context API / Redux) | Spring Boot | PostgreSQL |
+| React.js (with Context API) | Spring Boot | PostgreSQL |
 | React Lucid | JPA / Hibernate | pgAdmin (for DB admin) |
 | Tailwind CSS | Java | JDBC |
 | Axios | Maven | - |
