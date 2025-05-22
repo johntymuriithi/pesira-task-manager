@@ -63,41 +63,6 @@ export default function TaskCard({ task, onStatusChange, onDelete, onEdit }) {
         return null;
     }
   };
-
-   const handleDelete = async (id) => {
-   
-    // try {
-     
-    //   await dispatch(
-    //     deleteTask({id, token })
-    //   ).unwrap();
-    //   console.log("deleted")
-    // } catch (err) {
-    //   console.log(err); // for now only
-      
-    // } finally {
-    //   console.log('FAILED')
-    // }
-  };
-  
-  const handleComplete = async (id) => {
-   
-    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTc0NzgyNzQwMiwiZXhwIjoxNzQ3OTEzODAyfQ.dLgY_oB7mBIWEdNep9Urkqd9FMqtLcYPgJNdwl8kKGDXrwN6u1AMaf-s_Mh4Si9ynNdxp9Dk7u2Pxt94p6Dxcg';
-
-    // try {
-     
-    //   await dispatch(
-    //     completeTask({id, token })
-    //   ).unwrap();
-    //   console.log("completed")
-    // } catch (err) {
-    //   console.log(err); // for now only
-      
-    // } finally {
-    //   console.log('FAILED')
-    // }
-  };
-  
   
   return (
     <>
