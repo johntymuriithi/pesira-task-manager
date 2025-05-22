@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Calendar, CheckCircle2, Clock, Star, X } from 'lucide-react';
+
+import { TaskContext } from '@/context/TaskContext';
 
 
 type AddTaskModalProps = {
@@ -9,36 +11,30 @@ type AddTaskModalProps = {
 export default function AddTaskModal({ onClose }: AddTaskModalProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState('');
-  const [status, setStatus] = useState('pending');
+  const [dueDate, setDate] = useState('');
+  const [status, setStatus] = useState('PENDING');
 
   const [errors, setErrors] = useState<{ title?: string; dueDate?: string }>({});
 
- 
+  const { addTask } = useContext(TaskContext); 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const newErrors: typeof errors = {};
     if (!title.trim()) newErrors.title = 'Title is required';
-    if (!date) newErrors.dueDate = 'Due date is required';
+    if (!dueDate) newErrors.dueDate = 'Due date is required';
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length !== 0) return;
 
-    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTc0NzgyNzQwMiwiZXhwIjoxNzQ3OTEzODAyfQ.dLgY_oB7mBIWEdNep9Urkqd9FMqtLcYPgJNdwl8kKGDXrwN6u1AMaf-s_Mh4Si9ynNdxp9Dk7u2Pxt94p6Dxcg';
-
-    // try {
-    //   await dispatch(
-    //     createTask({ title, description, date, status, token })
-    //   ).unwrap();
-    //   alert('Task created successfully');
-    //   navigate('/');
-    //   onClose();
-    // } catch (err) {
-    //   console.error('Error creating task:', err);
-    // }
+    addTask({
+      title,
+      description,
+      dueDate,
+      status
+    }); 
   };
 
   return (
@@ -88,7 +84,7 @@ export default function AddTaskModal({ onClose }: AddTaskModalProps) {
               </div>
               <input
                 type="date"
-                value={date}
+                value={dueDate}
                 onChange={(e) => setDate(e.target.value)}
                 className={`w-full pl-10 pr-4 py-3 rounded-lg bg-gray-800 border ${
                   errors.dueDate ? 'border-red-500 focus:ring-red-500/50' : 'border-gray-700 focus:ring-purple-500/50'
@@ -102,9 +98,9 @@ export default function AddTaskModal({ onClose }: AddTaskModalProps) {
             <label className="block text-sm font-medium mb-1">Status</label>
             <div className="grid grid-cols-3 gap-4">
               {[
-                { label: 'Pending', icon: <Clock size={16} />, value: 'Pending', color: 'yellow' },
-                { label: 'In Progress', icon: <Star size={16} />, value: 'In_progress', color: 'blue' },
-                { label: 'Completed', icon: <CheckCircle2 size={16} />, value: 'Completed', color: 'green' },
+                { label: 'Pending', icon: <Clock size={16} />, value: 'PENDING', color: 'yellow' },
+                { label: 'In Progress', icon: <Star size={16} />, value: 'IN_PROGRESS', color: 'blue' },
+                { label: 'Completed', icon: <CheckCircle2 size={16} />, value: 'COMPLETED', color: 'green' },
               ].map(({ label, icon, value, color }) => (
                 <button
                   key={value}

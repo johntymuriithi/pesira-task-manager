@@ -12,7 +12,7 @@ import {
 import EditTaskModal from './EditTaskModal';
 
 
-export default function TaskCard({ task, onStatusChange, onDelete }) {
+export default function TaskCard({ task, onStatusChange, onDelete, onEdit }) {
   const [showOptions, setShowOptions] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   
@@ -38,21 +38,21 @@ export default function TaskCard({ task, onStatusChange, onDelete }) {
   // Status badge styles
   const getStatusBadge = () => {
     switch(task.status) {
-      case 'pending':
+      case 'PENDING':
         return (
           <div className="flex items-center gap-1.5 text-yellow-400 bg-yellow-400/10 px-2.5 py-1 rounded-full text-xs font-medium">
             <Clock size={12} />
             <span>Pending</span>
           </div>
         );
-      case 'in-progress':
+      case 'IN_PROGRESS':
         return (
           <div className="flex items-center gap-1.5 text-blue-400 bg-blue-400/10 px-2.5 py-1 rounded-full text-xs font-medium">
             <Star size={12} />
             <span>In Progress</span>
           </div>
         );
-      case 'completed':
+      case 'COMPLETED':
         return (
           <div className="flex items-center gap-1.5 text-green-400 bg-green-400/10 px-2.5 py-1 rounded-full text-xs font-medium">
             <CheckCircle2 size={12} />
@@ -66,8 +66,6 @@ export default function TaskCard({ task, onStatusChange, onDelete }) {
 
    const handleDelete = async (id) => {
    
-    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTc0NzgyNzQwMiwiZXhwIjoxNzQ3OTEzODAyfQ.dLgY_oB7mBIWEdNep9Urkqd9FMqtLcYPgJNdwl8kKGDXrwN6u1AMaf-s_Mh4Si9ynNdxp9Dk7u2Pxt94p6Dxcg';
-
     // try {
      
     //   await dispatch(
@@ -154,7 +152,7 @@ export default function TaskCard({ task, onStatusChange, onDelete }) {
                         className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm hover:bg-gray-700 transition-colors"
                       >
                         <CheckCircle2 size={16} className="text-green-400" />
-                        <span onClick={() => handleComplete(1)}>Mark as Completed</span>
+                        <span >Mark as Completed</span>
                       </button>
                     )}
                     
@@ -181,7 +179,7 @@ export default function TaskCard({ task, onStatusChange, onDelete }) {
                       className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm hover:bg-gray-700 transition-colors text-red-400"
                     >
                       <Trash2 size={16} />
-                      <span onClick={() => handleDelete(1)}>Delete Task</span>
+                      <span>Delete Task</span>
                     </button>
                   </div>
                 )}
@@ -196,6 +194,7 @@ export default function TaskCard({ task, onStatusChange, onDelete }) {
           task={task} 
           onClose={() => setShowEditModal(false)} 
           onStatusChange={onStatusChange}
+          onEdit={onEdit}
         />
       )}
     </>

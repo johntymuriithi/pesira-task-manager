@@ -1,129 +1,28 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useContext, useMemo } from 'react';
 import { Clock } from 'lucide-react';
 import TaskCard from './TaskCard';
+import { TaskContext } from '@/context/TaskContext';
 
 export default function TaskList({ filter, searchQuery }) {
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const observer = useRef();
+  const taskContext = useContext(TaskContext);
 
-  const Tasks = [
-    {
-      id: '1',
-      title: 'Complete project proposal',
-      description: 'Finalize the project scope and deliverables for the client pitch',
-      dueDate: '2025-06-01',
-      status: 'pending',
-     
-      created: '2025-05-15T10:30:00Z'
-    },
-    {
-      id: '2',
-      title: 'Research competitive analysis',
-      description: 'Gather information on top 5 competitors in the market',
-      dueDate: '2025-05-25',
-      status: 'in-progress',
-     
-      created: '2025-05-16T14:20:00Z'
-    },
-    {
-      id: '3',
-      title: 'Design user flow diagrams',
-      description: 'Create user journey maps and wireframes for the new feature',
-      dueDate: '2025-05-22',
-      status: 'in-progress',
-      
-      created: '2025-05-17T09:15:00Z'
-    },
-    {
-      id: '4',
-      title: 'Update documentation',
-      description: 'Review and update all technical documentation for the API',
-      dueDate: '2025-05-28',
-      status: 'pending',
-      
-      created: '2025-05-18T16:45:00Z'
-    },
-    {
-      id: '5',
-      title: 'Weekly team meeting',
-      description: 'Discuss project progress and address any blockers',
-      dueDate: '2025-05-21',
-      status: 'completed',
-      
-      created: '2025-05-19T11:00:00Z'
-    },
-  ];
-  
+  if (!taskContext) return null;
 
-  const generateMoreTasks = (startIndex) => {
-    return Array(5).fill().map((_, i) => ({
-      id: `${startIndex + i + 1}`,
-      title: `Task ${startIndex + i + 1}`,
-      description: `Generated task ${startIndex + i + 1}`,
-      dueDate: '2025-06-15',
-      status: ['pending', 'in-progress', 'completed'][Math.floor(Math.random() * 3)],
-      created: new Date().toISOString()
-    }));
-  };
+  const { tasks, deleteTask, changeStatus, loading, updateTask } = taskContext;
 
-  const loadMoreTasks = () => {
-    setLoading(true);
-    setTimeout(() => {
-      const newTasks = generateMoreTasks(tasks.length);
-      setTasks(prev => [...prev, ...newTasks]);
-      if (tasks.length + newTasks.length >= 30) setHasMore(false); // Limit to 30 tasks
-      setLoading(false);
-    }, 500);
-  };
+ const filteredTasks = useMemo(() => {
+  return tasks.filter(task => {
+    const normalizedStatus = task.status.toLowerCase().replace('_', '-');
+    const matchesStatus = filter === 'all' || normalizedStatus === filter;
 
-  const lastTaskElementRef = useCallback(
-    (node) => {
-      if (loading || !hasMore) return;
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver(entries => {
-        if (entries[0].isIntersecting) {
-          loadMoreTasks();
-        }
-      });
-      if (node) observer.current.observe(node);
-    },
-    [loading, hasMore]
-  );
+    const matchesSearch =
+      task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      task.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-  // Initial load
-  useEffect(() => {
-    setTasks([]);
-    setHasMore(true);
-    setLoading(true);
-    setTimeout(() => {
-      setTasks(generateMoreTasks(0));
-      setLoading(false);
-    }, 500);
-  }, [filter, searchQuery]);
-
-  const filteredTasks = tasks.filter(task => {
-    if (filter !== 'all' && task.status !== filter) return false;
-    if (
-      searchQuery &&
-      !task.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      !task.description.toLowerCase().includes(searchQuery.toLowerCase())
-    ) {
-      return false;
-    }
-    return true;
+    return matchesStatus && matchesSearch;
   });
+}, [tasks, filter, searchQuery]);
 
-  const handleStatusChange = (taskId, newStatus) => {
-    setTasks(prev =>
-      prev.map(task => (task.id === taskId ? { ...task, status: newStatus } : task))
-    );
-  };
-
-  const handleDeleteTask = (taskId) => {
-    setTasks(prev => prev.filter(task => task.id !== taskId));
-  };
 
   return (
     <div className="space-y-4">
@@ -146,28 +45,15 @@ export default function TaskList({ filter, searchQuery }) {
       ) : (
         <>
           <div className="grid grid-cols-1 gap-4">
-            {filteredTasks.map((task, index) => {
-              if (index === filteredTasks.length - 1) {
-                return (
-                  <div ref={lastTaskElementRef} key={task.id}>
-                    <TaskCard
-                      task={task}
-                      onStatusChange={handleStatusChange}
-                      onDelete={handleDeleteTask}
-                    />
-                  </div>
-                );
-              } else {
-                return (
-                  <TaskCard
-                    key={task.id}
-                    task={task}
-                    onStatusChange={handleStatusChange}
-                    onDelete={handleDeleteTask}
-                  />
-                );
-              }
-            })}
+            {filteredTasks.map(task => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                onStatusChange={(id, status) => changeStatus(id, status)}
+                onDelete={deleteTask}
+                onEdit={(task) => updateTask(task)}
+              />
+            ))}
           </div>
           {loading && (
             <div className="py-4 flex justify-center">

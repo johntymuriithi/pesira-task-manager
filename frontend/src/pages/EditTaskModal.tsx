@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Calendar, CheckCircle2, Clock, Star, X } from 'lucide-react';
 
-export default function EditTaskModal({ task, onClose, onStatusChange }) {
+export default function EditTaskModal({ task, onClose, onStatusChange, onEdit }) {
   const [editedTask, setEditedTask] = useState({
     id: task.id,
     title: task.title,
     description: task.description,
     dueDate: task.dueDate,
     status: task.status,
-    priority: task.priority
   });
   
   const [errors, setErrors] = useState({});
@@ -46,9 +45,8 @@ export default function EditTaskModal({ task, onClose, onStatusChange }) {
       console.log('Updating task:', editedTask);
       
       // Update the task's status if it has changed
-      if (editedTask.status !== task.status) {
-        onStatusChange(task.id, editedTask.status);
-      }
+      
+        onEdit(editedTask);
       
       // Close modal after successful update
       onClose();

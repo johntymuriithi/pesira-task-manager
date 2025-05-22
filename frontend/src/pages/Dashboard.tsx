@@ -1,21 +1,22 @@
-import { useState, useEffect, useContext } from 'react';
-import { 
-  CheckCircle2, 
-  ChevronRight, 
-  Clock, 
-  List, 
-  Menu, 
-  Plus, 
-  Search, 
-  Sparkles, 
-  Star, 
-  User 
+import { useState, useContext } from 'react';
+import {
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  List,
+  Menu,
+  Plus,
+  Search,
+  Sparkles,
+  Star,
+  User
 } from 'lucide-react';
 import TaskList from './TaskList';
 import AddTaskModal from './AddTaskModal';
 import EditTaskModal from './EditTaskModal';
 import { Task } from '@/types/Task';
 import { TaskContext } from '@/context/TaskContext';
+import UserContext from '@/context/UserContext';
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -23,53 +24,16 @@ export default function Dashboard() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const { user } = useContext(UserContext)
 
-  const taskContext = useContext(TaskContext);
-  const fetchTasks = taskContext?.fetchTasks;
-
-  useEffect(() => {
-    const storedTasks = localStorage.getItem('tasks');
-    if (storedTasks) {
-      setTasks(JSON.parse(storedTasks));
-    } else {
-      const initialTasks: Task[] = [
-        {
-          id: '1',
-          title: 'Complete project proposal',
-          description: 'Write and submit the project proposal for client review',
-          date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-          status: 'Pending',
-        },
-        {
-          id: '2',
-          title: 'Weekly team meeting',
-          description: 'Discuss project progress and assign new tasks',
-          date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
-          status: 'Pending',
-        },
-        {
-          id: '3',
-          title: 'Research new technologies',
-          description: 'Explore potential technologies for upcoming project',
-          date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-          status: 'Pending',
-        }
-      ];
-      setTasks(initialTasks);
-      localStorage.setItem('tasks', JSON.stringify(initialTasks));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }, [tasks]);
-
-  const user = {
-    name: 'Alex Johnson',
-    email: 'alex@example.com',
-    avatar: '/api/placeholder/40/40'
-  };
+  const {
+    tasks,
+    addTask,
+    deleteTask,
+    updateTask,
+    changeStatus,
+    loading
+  } = useContext(TaskContext)!;
 
   const filters = [
     { id: 'all', label: 'All Tasks', icon: List },
@@ -80,29 +44,22 @@ export default function Dashboard() {
 
   const handleAddTask = (newTask: Task) => {
     const taskWithId = { ...newTask, id: Date.now().toString() };
-    setTasks(prev => [...prev, taskWithId]);
+    addTask(taskWithId);
   };
 
   const handleDeleteTask = (taskId: string) => {
-    setTasks(prev => prev.filter(task => task.id !== taskId));
+    deleteTask(taskId);
   };
 
   const handleStatusChange = (taskId: string, newStatus: string) => {
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === taskId ? { ...task, status: newStatus } : task
-      )
-    );
+    changeStatus(taskId, newStatus);
   };
 
   const handleEditTask = (task: Task) => setEditingTask(task);
 
   const handleUpdateTask = (updatedTask: Task) => {
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === updatedTask.id ? updatedTask : task
-      )
-    );
+    console.log("we are getting here")
+    updateTask(updatedTask);
     setEditingTask(null);
   };
 
@@ -121,7 +78,7 @@ export default function Dashboard() {
               ) : (
                 <Sparkles className="text-purple-400 mx-auto" size={20} />
               )}
-              <button 
+              <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="p-1 rounded-md hover:bg-gray-800"
               >
@@ -131,7 +88,7 @@ export default function Dashboard() {
 
             <div className="flex flex-col flex-grow overflow-hidden p-3">
               <div className="mb-6">
-                <button 
+                <button
                   onClick={() => setIsAddTaskModalOpen(true)}
                   className="w-full flex items-center gap-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-md px-3 py-2 text-sm font-medium"
                 >
@@ -146,9 +103,9 @@ export default function Dashboard() {
                     key={filter.id}
                     onClick={() => setActiveFilter(filter.id)}
                     className={`w-full flex items-center ${sidebarOpen ? 'justify-start' : 'justify-center'} gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
-                      activeFilter === filter.id 
-                      ? 'bg-gray-800 text-purple-400' 
-                      : 'text-gray-400 hover:bg-gray-800/50 hover:text-white'
+                      activeFilter === filter.id
+                        ? 'bg-gray-800 text-purple-400'
+                        : 'text-gray-400 hover:bg-gray-800/50 hover:text-white'
                     }`}
                   >
                     <filter.icon size={18} />
@@ -161,14 +118,9 @@ export default function Dashboard() {
             <div className="p-3 border-t border-gray-800 mt-auto">
               <div className={`flex items-center ${sidebarOpen ? 'justify-between' : 'justify-center'} p-2 rounded-md`}>
                 <div className="flex items-center gap-3">
-                  <img 
-                    src={user.avatar} 
-                    alt={user.name} 
-                    className="w-8 h-8 rounded-full bg-gray-700" 
-                  />
                   {sidebarOpen && (
                     <div className="text-sm">
-                      <div className="font-medium">{user.name}</div>
+                      <div className="font-medium">{user.username}</div>
                       <div className="text-gray-400 text-xs">{user.email}</div>
                     </div>
                   )}
@@ -209,26 +161,30 @@ export default function Dashboard() {
             <p className="text-gray-400">Manage and organize your tasks efficiently</p>
           </div>
 
-          <TaskList 
-            tasks={tasks} 
-            filter={activeFilter} 
-            searchQuery={searchQuery} 
-            onDelete={handleDeleteTask}
-            onEdit={handleEditTask}
-            onStatusChange={handleStatusChange}
-          />
+          {loading ? (
+            <p className="text-gray-400">Loading tasks...</p>
+          ) : (
+            <TaskList
+              tasks={tasks}
+              filter={activeFilter}
+              searchQuery={searchQuery}
+              onDelete={handleDeleteTask}
+              onEdit={handleEditTask}
+              onStatusChange={handleStatusChange}
+            />
+          )}
         </main>
       </div>
 
       {isAddTaskModalOpen && (
-        <AddTaskModal 
+        <AddTaskModal
           onClose={() => setIsAddTaskModalOpen(false)}
           onAdd={handleAddTask}
         />
       )}
 
       {editingTask && (
-        <EditTaskModal 
+        <EditTaskModal
           task={editingTask}
           onClose={() => setEditingTask(null)}
           onStatusChange={handleStatusChange}
